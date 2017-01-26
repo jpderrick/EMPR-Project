@@ -1,7 +1,7 @@
 # EMPR-Project
 Code for the EMPR Group Project
 
-A useful list of screen IDs:
+A useful list of screen IDs:<br/>
 	0: Main Screen  - 'homepage'
 	1: Parallel or Serial Mode
 	2: Select Filter
