@@ -13,3 +13,32 @@ Possible input methods for values of filter variables:
 	- potentiometer
 	- keypad => shown in segment display
 	- keypad => shown directly on keypad - probably too much updating of the screen to do
+
+Screens to show:
+	- Main Screen
+	- A
+
+To ADD a filter(s);
+								
+									User Presses ADD
+											|
+											|
+								   Parallel or Serial?
+								   			|
+								   		 ___|___________
+								   		|  				|
+								   		|				|
+								   		P				S
+								   		|				|
+								   	  __|__         	|
+								   	 |	   |		   Filter 
+								Filter A   Filter B    + Params
+								+ Params   + Params     |
+									 |	   |			|
+									 |_____|			|
+									 	|				|
+									Mix + Params 	Mix w/ Source?
+										|				+ Params
+										|				|
+									   FIN.			   FIN.
+									   				   
