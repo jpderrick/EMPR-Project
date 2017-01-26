@@ -1,0 +1,15 @@
+Break everything down into 'modules':
+	- Two Parallel Filters
+	- Mixer (can select original signal input)
+	- Serial Filter
+
+Initial Screen:
+	- CONFIG Button - shows the current setup of the filters etc.
+	- ADD Button - allows them to add a new module
+	- AVG SIGNAL INPUT LEVEL - in real time
+
+
+Possible input methods for values of filter variables:
+	- potentiometer
+	- keypad => shown in segment display
+	- keypad => shown directly on keypad - probably too much updating of the screen to do
