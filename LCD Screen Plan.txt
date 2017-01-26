@@ -1,3 +1,15 @@
+A useful list of screen IDs:
+	0: Main Screen  - 'homepage'
+	1: Parallel or Serial Mode
+	2: Select Filter
+	3: Add Mixer
+	4: 
+	70: VUU
+	70: Config Screen
+	70: Reset
+	100: No Screen for this Button
+
+
 Break everything down into 'modules':
 	- Two Parallel Filters
 	- Mixer (can select original signal input)
@@ -41,4 +53,4 @@ To ADD a filter(s);
 										|				+ Params
 										|				|
 									   FIN.			   FIN.
-									   				   
+									   				  
