@@ -6,21 +6,7 @@
 #include <lpc17xx_i2c.h>
 
 I2C_M_SETUP_Type ScreenTransferConfig;
-LPC_I2C_TypeDef *I2C = LPC_I2C1;
 
-/*ScreenTransferConfig.tx_length = 33;
-			ScreenTransferConfig.tx_data = writeBlank;
-			I2C_MasterTransferData(I2C, &ScreenTransferConfig, I2C_TRANSFER_POLLING);
-			ScreenTransferConfig.tx_length = 2;
-			ScreenTransferConfig.tx_data = screenOn;
-			I2C_MasterTransferData(I2C, &ScreenTransferConfig, I2C_TRANSFER_POLLING);*/
-
-void I2CSetup(void){
-
-	I2C_Init(I2C, 100000);
-	I2C_Cmd(I2C,ENABLE);
-
-}
 int SetupScreen(void){
 
 	//The Data to send
@@ -38,7 +24,7 @@ int SetupScreen(void){
 	ScreenPinConfig.Pinnum = 1;
 	PINSEL_ConfigPin(&ScreenPinConfig);
 
-	I2CSetup();
+	setupI2C();
 
 	ScreenTransferConfig.tx_length = 12;
 	ScreenTransferConfig.sl_addr7bit = 59;
@@ -73,7 +59,7 @@ void gatherScreenData(int screenUID){
 
 void mainScreen(void){
 	//show the main screen
-	uint8_t nextScreenID[4] = [1,2,3,4];
+	uint8_t nextScreenID[4] = [1,70,70,70];
 	uint8_t writeBlank[33] = {0x40, 'A', 'D', 'D', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'O', 'N', 'F', 'I', 'G', 'V', 'U', 'U', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'L', 'E', 'A', 'R'};
 	showScreen(writeBlank);
 	//while (no valid keyboard input detected){
@@ -108,6 +94,7 @@ int showScreen(uint8_t screenData[]){
 }
 
 void main(void){
+
 		if(SetupScreen() == 0){
 			//Screen hasn't been set up correctly, get rekt
 		}else {
