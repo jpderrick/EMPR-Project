@@ -12,20 +12,6 @@ int SetupScreen(void){
 	//The Data to send
 	uint8_t initScreen[12] = {0x00,0x34,0x0c,0x06,0x35,0x04,0x10,0x42,0x9f,0x34,0x02,0x20};
 
-	//Pin Configuration    
-	PINSEL_CFG_Type ScreenPinConfig;
-	ScreenPinConfig.Funcnum = 3;
-	ScreenPinConfig.OpenDrain = 0;
-	ScreenPinConfig.Pinmode = 0;
-	ScreenPinConfig.Portnum = 0;
-	ScreenPinConfig.Pinnum = 0;
-
-	PINSEL_ConfigPin(&ScreenPinConfig);
-	ScreenPinConfig.Pinnum = 1;
-	PINSEL_ConfigPin(&ScreenPinConfig);
-
-	setupI2C();
-
 	ScreenTransferConfig.tx_length = 12;
 	ScreenTransferConfig.sl_addr7bit = 59;
 	ScreenTransferConfig.tx_data = initScreen;
@@ -94,7 +80,7 @@ int showScreen(uint8_t screenData[]){
 }
 
 void main(void){
-
+		setupI2C();
 		if(SetupScreen() == 0){
 			//Screen hasn't been set up correctly, get rekt
 		}else {

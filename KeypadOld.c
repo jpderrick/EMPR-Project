@@ -105,15 +105,6 @@ char *getCharacter(char buffer){
 		}
 
 }
-void setupScreen(void){
-	
-	TransferConfig.tx_data = NULL;
-	TransferConfig.tx_length = 12;
-	TransferConfig.sl_addr7bit = 59;
-	TransferConfig.tx_data = initScreen;
-	I2C_MasterTransferData(I2C, &TransferConfig, I2C_TRANSFER_POLLING);
-
-}
 
 void sendToScreen(char *keyPressed){
 		if(keyPressed == previousKey){
