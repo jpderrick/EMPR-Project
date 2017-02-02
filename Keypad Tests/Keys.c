@@ -32,7 +32,7 @@ int setupI2C(void){
 
 	I2C_Init(I2C, 100000);
 	I2C_Cmd(I2C,ENABLE);
-
+	return 1;
 }
 char *bufferToChar(char buffer){
 
@@ -98,12 +98,14 @@ void enableColumn(int column){
 	I2C_MasterTransferData(I2C, &KeypadTransferConfig, I2C_TRANSFER_POLLING);
 }
 
-void listenForKey(void){
+int listenForKey(void){
 	int i =1;
 	uint8_t buffer[1] = {};
 	int keyPressed = 0;
+	char* previousKeyPressed = lastKeyPressed;
+	
 	while(keyPressed == 0){
-		
+		lastKeyPressed = "X";
 		for(i=1;i<=4;i++){
 
 			KeypadTransferConfig.rx_length = 1;
@@ -112,8 +114,8 @@ void listenForKey(void){
 			I2C_MasterTransferData(I2C,&KeypadTransferConfig,I2C_TRANSFER_POLLING);
 			lastKeyPressed = bufferToChar(buffer[0]);
 			
-			if(lastKeyPressed != "X"){
-				
+			if(lastKeyPressed != "X" || lastKeyPressed != previousKeyPressed){
+				keyPressed = 1;
 				sprintf(output,"Returned %s \n\r",lastKeyPressed);
 				write_usb_serial_blocking(output,strlen(output));
 				
@@ -122,12 +124,18 @@ void listenForKey(void){
 
 		}
 	}
-	
-}	
+	return 1;
+}
 char *getKeyPressed(void){
 
 	return lastKeyPressed;
 
+}
+	
+void getUserInput(int length){
+	
+	//Build an array of chars length defined by the params, that can build up an imput from the keypad	
+	
 }
 
 int isLastKeyPressed(char *key){
@@ -143,10 +151,9 @@ int isLastKeyPressed(char *key){
 void main(void){
 	serial_init();
 	setupI2C();
+while(1){
 	listenForKey();
-
-	
-
+}
 }
 
 // Read options
