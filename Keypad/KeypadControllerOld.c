@@ -2,18 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <lpc17xx_pinsel.h>
-#include "lpc17xx_uart.h"
 #include <lpc_types.h>
 #include <lpc17xx_i2c.h>
 #include "serial.h"
 
 LPC_I2C_TypeDef *I2C = LPC_I2C1;
-I2C_M_SETUP_Type KeypadTransferConfig;
-char *lastKeyPressed = "X";
-char output[30];
-uint8_t setHigh[] = {0x7F};
+I2C_M_SETUP_Type ScreenTransferConfig;
+char lastKeyPressed = "X";
 
-int setupI2C(void){
+void setupI2C(void){
 
 	PINSEL_CFG_Type PinCfg;
 	PinCfg.Funcnum = 3;
@@ -32,9 +29,40 @@ int setupI2C(void){
 
 	I2C_Init(I2C, 100000);
 	I2C_Cmd(I2C,ENABLE);
-	return 1;
+
 }
-char *bufferToChar(char buffer){
+int listenForKey(void){
+	//Just poll the keyboard, waiting for a key to be pressed, 
+	//return 1 if a key has been pressed
+	while(lastKeyPressed == "X"){
+		//Loop through each column
+		for(int i = 1;i<=4;i++){
+			KeypadTransferConfig.rx_length = 1;
+			uint8_t buffer[1] = {};
+			KeypadTransferConfig.rx_data = buffer;
+			enableColumn(i);
+			I2C_MasterTransferData(I2C, &TransferConfig, I2C_TRANSFER_POLLING);
+			lastKeyPressed = bufferToChar(buffer[0]);
+		}
+	}
+	return 1;
+}	
+char getKeyPressed(void){
+
+	return lastKeyPressed;
+
+}
+
+int isLastKeyPressed(char key){
+
+	if(key == lastKeyPressed){
+		return 1;
+	}else {
+		return 0;
+	}
+}
+
+char bufferToChar(char buffer){
 
 		if(buffer == 0xB7){
 			return "2";
@@ -69,19 +97,19 @@ char *bufferToChar(char buffer){
 		}else if(buffer == 0xEE){
 			return "D";
 		}
-	else {
+		else {
 			return "X";
 		}
 
 }
 
 void enableColumn(int column){
-	
+	uint8_t setHigh[1];
 	switch(column){
 		case 1:
-			setHigh[0] = 0x7F;
+			setHigh[0] = 0x7F; 
 			break;
-		case 2:
+		case 2: 
 			setHigh[0] = 0xBF;
 			break;
 		case 3:
@@ -89,71 +117,26 @@ void enableColumn(int column){
 			break;
 		case 4:
 			setHigh[0] = 0xEF;
-			break;
+			break; 
 	}
-	
-	KeypadTransferConfig.tx_length = 1;
-	KeypadTransferConfig.sl_addr7bit = 33;
-	KeypadTransferConfig.tx_data = setHigh;
+
+	TransferConfig.tx_length = 1;
+	TransferConfig.sl_addr7bit = 33;
+	TransferConfig.tx_data = setHigh;
 	I2C_MasterTransferData(I2C, &KeypadTransferConfig, I2C_TRANSFER_POLLING);
 }
 
-int listenForKey(void){
-	int i =1;
-	uint8_t buffer[1] = {};
-	int keyPressed = 0;
-	char* previousKeyPressed = lastKeyPressed;
-	
-	while(keyPressed == 0){
-		lastKeyPressed = "X";
-		for(i=1;i<=4;i++){
-
-			KeypadTransferConfig.rx_length = 1;
-			KeypadTransferConfig.rx_data = buffer;
-			enableColumn(i);
-			I2C_MasterTransferData(I2C,&KeypadTransferConfig,I2C_TRANSFER_POLLING);
-			lastKeyPressed = bufferToChar(buffer[0]);
-			
-			if(lastKeyPressed != "X" || lastKeyPressed != previousKeyPressed){
-				keyPressed = 1;
-				sprintf(output,"Returned %s \n\r",lastKeyPressed);
-				write_usb_serial_blocking(output,strlen(output));
-				
-			}
-		
-
-		}
-	}
-	return 1;
-}
-char *getKeyPressed(void){
-
-	return lastKeyPressed;
-
-}
-	
-void getUserInput(int length){
-	
-	//Build an array of chars length defined by the params, that can build up an imput from the keypad	
-	
-}
-
-int isLastKeyPressed(char *key){
-
-	if(strcmp(key,lastKeyPressed) == 0){
-		return 1;
-	}else {
-		return 0;
-	}
-}
-
-
 void main(void){
-	serial_init();
 	setupI2C();
-while(1){
-	listenForKey();
-}
+	serial_init();
+	if(SetupKeypad() == 0){
+		//There's a problem witht he keypad setting up
+		write_usb_serial_blocking("Keypad Problem",14);
+	}else{
+		write_usb_serial_blocking("Keypad Setup",12);
+		listenForKey();
+	}
+
 }
 
 // Read options
@@ -208,4 +191,3 @@ void serial_init(void)
 	UART_TxCmd((LPC_UART_TypeDef *)LPC_UART0, ENABLE);			// Enable UART Transmit
 	
 }
-
