@@ -1,5 +1,6 @@
 I2C_M_SETUP_Type ScreenTransferConfig;
 
+
 int SetupScreen(void){
 
 	//The Data to send
@@ -38,14 +39,12 @@ void gatherScreenData(int screenUID){
 
 void mainScreen(void){
 	//show the main screen
-	//uint8_t nextScreenID[4] = {1,70,70,70};
-	uint8_t writeBlank[33] = {0x40, 'a', 'd', 'd', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'o', 'n', 'f', 'i', 'g', 'v', 'u', 'u', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'l', 'e', 'a', 'r'};
+	uint8_t nextScreenID[4] = {1,70,70,70};
+	uint8_t writeBlank[33] = {0x40, 'a', 'd', 'd', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'o', 'n', 'f', 'i', 'g', 'v', 'g', 'u', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'l', 'e', 'a', 'r'};
 	showScreen(writeBlank);
-	
-	if(listenForMenu("A","B","C","D") == 1){
+	if(ScreenController(listenForMenu("A","B","C","D")) == 1){
 		ScreenController(1);
 	}
-	//ScreenController(nextScreenID[X]);
 }
 
 void chooseModeScreen(void){
@@ -53,10 +52,6 @@ void chooseModeScreen(void){
 	uint8_t nextScreenID[4] = {100,100,100,4};
 	uint8_t writeBlank[33] = {0x40, 'a', 'd', 'd', 0xA0, 'a', 0xA0, 'f', 0xA0, 0xA0, 0xA0, 'C', 'O', 'N', 'F', 'I', 'G', 'V', 'U', 'U', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'L', 'E', 'A', 'R'};
 	showScreen(writeBlank);
-	//while (no valid keyboard input detected){
-
-	//}
-	//ScreenController(nextScreenID[X]);
 }
 
 void ScreenController(int screenUID){
@@ -70,7 +65,7 @@ void ScreenController(int screenUID){
 			break;
 
 	}
-	return;
+	
 }
 	
 	

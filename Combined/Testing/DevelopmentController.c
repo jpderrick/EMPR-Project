@@ -18,6 +18,5 @@ void main(void){
 	setupI2C();
 	SetupScreen();
 	ScreenController(0);
-	listenForMenu("A","B","C","D");
 }
 
