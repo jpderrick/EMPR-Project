@@ -86,8 +86,6 @@ int listenForKey(void){
 			
 			if(lastKeyPressed != "X" || lastKeyPressed != previousKeyPressed){
 				keyPressed = 1;
-				sprintf(output,"Returned %s \n\r",lastKeyPressed);
-				write_usb_serial_blocking(output,strlen(output));
 				break;
 			}
 		
@@ -109,16 +107,16 @@ int listenForMenu(char *L1, char *L2, char *R1, char *R2){
 	}	
 	
 	if(lastKeyPressed == L1){
-		write_usb_serial_blocking("Selected L1 \n\r",16);
+	
 		return 1;
 	}else if(lastKeyPressed == L2){
-		write_usb_serial_blocking("Selected L2 \n\r",16);
+		
 		return 2;
 	}else if(lastKeyPressed  == R1){
-		write_usb_serial_blocking("Selected R1 \n\r",16);
+		
 		return 3;
 	}else if(lastKeyPressed == R2){
-		write_usb_serial_blocking("Selected R2 \n\r",16);
+	
 		return 4;
 	}
 	
@@ -133,10 +131,4 @@ int isLastKeyPressed(char *key){
 	}
 }
 
-
-void main(void){
-	serial_init();
-	setupI2C();
-	listenForMenu("A","B","C","D");
-}
 

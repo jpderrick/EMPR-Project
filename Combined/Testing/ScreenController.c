@@ -1,4 +1,3 @@
-
 I2C_M_SETUP_Type ScreenTransferConfig;
 
 int SetupScreen(void){
@@ -18,50 +17,6 @@ int SetupScreen(void){
 
 }
 
-
-void ScreenController(int screenUID=0){
-	//Take the screenUID requested, and run the correct function
-	switch(screenUID){
-		case 0:
-			mainScreen();
-			break;
-		case 1:
-			chooseModeScreen();
-			break;
-
-	}
-	return;
-}
-
-void gatherScreenData(int screenUID){
-	//Collect all of the data needed for the screen that's static
-	return;
-}
-
-void mainScreen(void){
-	//show the main screen
-	uint8_t nextScreenID[4] = [1,70,70,70];
-	uint8_t writeBlank[33] = {0x40, 'A', 'D', 'D', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'O', 'N', 'F', 'I', 'G', 'V', 'U', 'U', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'L', 'E', 'A', 'R'};
-	showScreen(writeBlank);
-	//while (no valid keyboard input detected){
-
-	//}
-	//ScreenController(nextScreenID[X]);
-}
-
-void chooseModeScreen(void){
-	//choose whether this module shall be serial or parallel
-	uint8_t nextScreenID[4] = [100,100,,4];
-	uint8_t writeBlank[33] = {0x40, 'A', 'D', 'D', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'O', 'N', 'F', 'I', 'G', 'V', 'U', 'U', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'L', 'E', 'A', 'R'};
-	showScreen(writeBlank);
-	//while (no valid keyboard input detected){
-
-	//}
-	//ScreenController(nextScreenID[X]);
-}
-
-void 
-
 int showScreen(uint8_t screenData[]){
 
 	ScreenTransferConfig.tx_length = 33; //Length is always 33 (since 32 items of data, plus the write bit)
@@ -76,18 +31,46 @@ int showScreen(uint8_t screenData[]){
 	
 }
 
-void main(void){
-		setupI2C();
-		if(SetupScreen() == 0){
-			//Screen hasn't been set up correctly, get rekt
-			printf("Oh well");
-		}else {
-			//Run the Screen
-			ScreenController(); //Start the screen off at controlller 1
-		}
-			
-		
-		
+void gatherScreenData(int screenUID){
+	//Collect all of the data needed for the screen that's static
+	return;
+}
+
+void mainScreen(void){
+	//show the main screen
+	//uint8_t nextScreenID[4] = {1,70,70,70};
+	uint8_t writeBlank[33] = {0x40, 'a', 'd', 'd', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'o', 'n', 'f', 'i', 'g', 'v', 'u', 'u', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'l', 'e', 'a', 'r'};
+	showScreen(writeBlank);
+	
+	if(listenForMenu("A","B","C","D") == 1){
+		ScreenController(1);
+	}
+	//ScreenController(nextScreenID[X]);
+}
+
+void chooseModeScreen(void){
+	//choose whether this module shall be serial or parallel
+	uint8_t nextScreenID[4] = {100,100,100,4};
+	uint8_t writeBlank[33] = {0x40, 'a', 'd', 'd', 0xA0, 'a', 0xA0, 'f', 0xA0, 0xA0, 0xA0, 'C', 'O', 'N', 'F', 'I', 'G', 'V', 'U', 'U', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'C', 'L', 'E', 'A', 'R'};
+	showScreen(writeBlank);
+	//while (no valid keyboard input detected){
+
+	//}
+	//ScreenController(nextScreenID[X]);
+}
+
+void ScreenController(int screenUID){
+	//Take the screenUID requested, and run the correct function
+	switch(screenUID){
+		case 0:
+			mainScreen();
+			break;
+		case 1:
+			chooseModeScreen();
+			break;
+
+	}
+	return;
 }
 	
 	
