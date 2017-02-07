@@ -53,6 +53,24 @@ char getKeyPressed(void){
 
 }
 
+int listenForMenu(char L1, char L2, char R1, char R2){
+
+	while(lastKeyPressed != L1 && lastKeyPressed != L2 && lastKeyPressed != R1 && lastKeyPressed != R2){
+		listenForKey()	
+	}	
+	
+	if(lastKeyPressed == L1){
+		return 1;
+	}else if(lastKeyPressed == L2){
+		return 2;
+	}else if(lastKeyPressed  == R1){
+		return 3;
+	}else if(lastKeyPressed == R2){
+		return 4;
+	}
+	
+}
+
 int isLastKeyPressed(char key){
 
 	if(key == lastKeyPressed){

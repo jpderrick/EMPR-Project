@@ -118,7 +118,7 @@ int listenForKey(void){
 				keyPressed = 1;
 				sprintf(output,"Returned %s \n\r",lastKeyPressed);
 				write_usb_serial_blocking(output,strlen(output));
-				
+				break;
 			}
 		
 
@@ -132,9 +132,25 @@ char *getKeyPressed(void){
 
 }
 	
-void getUserInput(int length){
+int listenForMenu(char *L1, char *L2, char *R1, char *R2){
+
+	while(strcmp(lastKeyPressed,L1) != 0 && strcmp(lastKeyPressed,L2) != 0 && strcmp(lastKeyPressed,R1) != 0 && strcmp(lastKeyPressed,R2) != 0){
+		listenForKey();	
+	}	
 	
-	//Build an array of chars length defined by the params, that can build up an imput from the keypad	
+	if(lastKeyPressed == L1){
+		write_usb_serial_blocking("Selected L1 \n\r",16);
+		return 1;
+	}else if(lastKeyPressed == L2){
+		write_usb_serial_blocking("Selected L2 \n\r",16);
+		return 2;
+	}else if(lastKeyPressed  == R1){
+		write_usb_serial_blocking("Selected R1 \n\r",16);
+		return 3;
+	}else if(lastKeyPressed == R2){
+		write_usb_serial_blocking("Selected R2 \n\r",16);
+		return 4;
+	}
 	
 }
 
@@ -151,9 +167,7 @@ int isLastKeyPressed(char *key){
 void main(void){
 	serial_init();
 	setupI2C();
-while(1){
-	listenForKey();
-}
+	listenForMenu("A","B","C","D");
 }
 
 // Read options
