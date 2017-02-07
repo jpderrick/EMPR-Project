@@ -46,6 +46,7 @@ int SetupScreen(void){
 
 }
 
+
 void ScreenController(int screenUID=0){
 	//Take the screenUID requested, and run the correct function
 	switch(screenUID){
@@ -87,6 +88,8 @@ void chooseModeScreen(void){
 	//ScreenController(nextScreenID[X]);
 }
 
+void 
+
 int showScreen(uint8_t screenData[]){
 
 	ScreenTransferConfig.tx_length = 33; //Length is always 33 (since 32 items of data, plus the write bit)
@@ -105,6 +108,7 @@ void main(void){
 		setupI2C();
 		if(SetupScreen() == 0){
 			//Screen hasn't been set up correctly, get rekt
+			printf("Oh well");
 		}else {
 			//Run the Screen
 			ScreenController(); //Start the screen off at controlller 1
