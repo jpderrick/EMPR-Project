@@ -60,7 +60,7 @@ void mainScreen(void){
 	uint8_t writeBlank[33] = {0x40, 'a', 'd', 'd', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'o', 'n', 'f', 'i', 'g', 'v', 'g', 'u', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'l', 'e', 'a', 'r'};
 	showScreen(writeBlank);
 	screenPause();
-	int menuChoice = listenForMenu("A","B","C","D");
+	int menuChoice = listenForMenu("A","*","*","*");
 	if(menuChoice == 1){
 		ScreenController(1);
 	}
@@ -73,7 +73,7 @@ void chooseModeScreen(void){
 	uint8_t writeBlank[33] = {0x40, 'v', 'u', 'u', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'l', 'e', 'e', 'r','a', 'd', 'd', 0xA0, 'a', 0xA0, 'f', 0xA0, 0xA0, 0xA0, 'c', 'o', 'b', 'f', 'i', 'g'};
 	showScreen(writeBlank);
 	screenPause();
-	int menuChoice = listenForMenu("A","B","C","D");
+	int menuChoice = listenForMenu("A","*","C","*");
 	if(menuChoice == 1){
 		ScreenController(0);
 	}else if(menuChoice == 3){
@@ -81,16 +81,35 @@ void chooseModeScreen(void){
 	}
 }
 
-void aNewScreen(void){	
-//choose whether this module shall be serial or parallel
-	uint8_t nextScreenID[4] = {100,100,100,4};
-	uint8_t writeBlank[33] = {0x40, 't', 'h', 'r', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'r','a', 'd', 'd', 0xA0, 'a', 0xA0, 'f', 0xA0, 0xA0, 0xA0, 'c', 'o', 'b', 'f', 'i', 'g'};
-	showScreen(writeBlank);
-	screenPause();
-	int menuChoice = listenForMenu("A","B","C","D");
-	if(menuChoice == 1){
-		ScreenController(0);
+void chooseFilter(int filterPage){
+	int pages = 2;  //How many [pages we have of filters (number of filters/2)
+	//show the filters, 2 at a time (one on each line, using A/B to select them , and D to advance the page)
+	uint8_t filters_one[33] = {0x40, 'h','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0};
+	uint8_t filters_two[33] = {0x40, 'b','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0};
+	if(filterPage == 1){
+		showScreen(filters_one);
+		screenPause();
+	}else if(filterPage == 2){
+		showScreen(filters_two);
+		screenPause();
 	}
+	
+	int menuChoice = listenForMenu("A","B","*","D");
+	if(menuChoice == 1){
+		ScreenController(0); //They've selected this filter
+	}else if(menuChoice == 2){
+		ScreenController(2); //They've selected this filter	
+	}else if(menuChoice == 4){
+		if(filterPage < pages){
+			chooseFilter(filterPage+1);
+		}else {
+			chooseFilter(1);
+		}
+	}
+		
+
+	
+
 }
 
 void ScreenController(int screenUID){
@@ -105,7 +124,7 @@ void ScreenController(int screenUID){
 			chooseModeScreen();
 			break;
 		case 2:
-			aNewScreen();
+			chooseFilter(1);
 			break;
 
 	}
