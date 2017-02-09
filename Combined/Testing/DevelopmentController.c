@@ -6,6 +6,7 @@
 #include <lpc17xx_pinsel.h>
 #include <lpc_types.h>
 #include <lpc17xx_i2c.h>
+#include <lpc17xx_gpio.h>
 #include "serial.h"
 //Include the controllers
 #include "I2CController.c"
@@ -17,6 +18,7 @@
 void main(void){
 	setupI2C();
 	SetupScreen();
+
 	ScreenController(0);
 }
 

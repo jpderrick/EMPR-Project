@@ -73,9 +73,10 @@ int listenForKey(void){
 	uint8_t buffer[1] = {};
 	int keyPressed = 0;
 	char* previousKeyPressed = lastKeyPressed;
-	
+	lastKeyPressed = "X";
+	char *non_key = "X";
 	while(keyPressed == 0){
-		lastKeyPressed = "X";
+		
 		for(i=1;i<=4;i++){
 
 			KeypadTransferConfig.rx_length = 1;
@@ -84,7 +85,7 @@ int listenForKey(void){
 			I2C_MasterTransferData(I2C,&KeypadTransferConfig,I2C_TRANSFER_POLLING);
 			lastKeyPressed = bufferToChar(buffer[0]);
 			
-			if(lastKeyPressed != "X" || lastKeyPressed != previousKeyPressed){
+			if((strcmp(lastKeyPressed,non_key) != 0) || (strcmp(lastKeyPressed,previousKeyPressed) != 0)){
 				keyPressed = 1;
 				break;
 			}
@@ -107,19 +108,23 @@ int listenForMenu(char *L1, char *L2, char *R1, char *R2){
 	}	
 	
 	if(lastKeyPressed == L1){
-	
+		lastKeyPressed = "X";
 		return 1;
 	}else if(lastKeyPressed == L2){
-		
+		lastKeyPressed = "X";
 		return 2;
 	}else if(lastKeyPressed  == R1){
-		
+		lastKeyPressed = "X";
 		return 3;
 	}else if(lastKeyPressed == R2){
-	
+		lastKeyPressed = "X";
 		return 4;
 	}
-	
+	return 0;
+}
+
+void setLastKey(char *key){
+	lastKeyPressed = key;
 }
 
 int isLastKeyPressed(char *key){
