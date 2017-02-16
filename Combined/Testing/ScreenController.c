@@ -2,6 +2,15 @@ I2C_M_SETUP_Type ScreenTransferConfig;
 
 void ScreenController(int screenUID);
 
+void screenPause(void){
+	
+	int i = 0;
+	for(i=0;i<=10000000;i++){
+	}
+	GPIO_SetDir(1, 0x40000, 1);
+	GPIO_SetValue(1, 0x40000);
+}
+
 int SetupScreen(void){
 
 	//The Data to send
@@ -46,17 +55,10 @@ void gatherScreenData(int screenUID){
 	return;
 }
 
-void screenPause(void){
-	
-	int i = 0;
-	for(i=0;i<=10000000;i++){
-	}
-	GPIO_SetDir(1, 0x40000, 1);
-	GPIO_SetValue(1, 0x40000);
-}
+
 void mainScreen(void){
 	//show the main screen
-	uint8_t nextScreenID[4] = {1,70,70,70};
+	//uint8_t nextScreenID[4] = {1,70,70,70};
 	uint8_t writeBlank[33] = {0x40, 'a', 'd', 'd', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'o', 'n', 'f', 'i', 'g', 'v', 'g', 'u', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'c', 'l', 'e', 'a', 'r'};
 	showScreen(writeBlank);
 	screenPause();
@@ -81,25 +83,80 @@ void chooseModeScreen(void){
 	}
 }
 
-void chooseFilter(int filterPage){
-	int pages = 2;  //How many [pages we have of filters (number of filters/2)
-	//show the filters, 2 at a time (one on each line, using A/B to select them , and D to advance the page)
-	uint8_t filters_one[33] = {0x40, 'h','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0};
-	uint8_t filters_two[33] = {0x40, 'b','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0};
-	if(filterPage == 1){
-		showScreen(filters_one);
-		screenPause();
-	}else if(filterPage == 2){
-		showScreen(filters_two);
-		screenPause();
-	}
+int getUserInput(void){
+	int positionCounter = 16;
+	uint8_t writeBlank[33] = {0x40, 'e', 'n', 't', 'e','r', 0xA0, 'a', 0xA0, 'v', 'a', 'l', 'u', 'e', 0xA0, 0xA0, 0xA0, 0xA0,0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 0xA0};
+	showScreen(writeBlank);
+	screenPause();
+	while(strcmp(lastKeyPressed,"D") != 0){
 	
+	 	listenForKey();
+		if(strcmp(lastKeyPressed,"D") != 0){
+			if(strcmp(lastKeyPressed,"C") == 0){
+				//Clear the last entered valye
+				if(positionCounter != 16){
+					writeBlank[positionCounter] =  0xA0;
+					showScreen(writeBlank);
+					screenPause();
+					positionCounter -= 1;	
+				}				
+				
+				
+			}else {
+				
+				if(positionCounter != 32){
+					writeBlank[positionCounter] = lastKeyPressed;
+					showScreen(writeBlank);
+					screenPause();
+					positionCounter += 1;				
+				}
+
+			}
+			
+		}
+	
+	}
+
+	return 1;
+	
+
+}
+void filterParams(int filterID){
+	uint8_t filters[4][33] = {
+		{}, //give each filter an ID
+		{0x40, 'h','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0},
+		{0x40, 'b','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0}
+	};
+	
+}
+void chooseFilter(int filterPage){
+
+	/* Each filter has its own ID
+
+		1: Low Pass
+		2: High Pass
+		3: Flanging
+		4: Echo
+
+	*/
+	//We'll store all of the filters with their UID in an array which output the right page requested
+	//uint8_t filters[4][33] = {
+		{1,2,3,4}, //give each filter an ID
+		{0x40, 'h','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0},
+		{0x40, 'b','e','l','l','o', 0xA0,'w','o','r','l','d', 0xA0, 0xA0, 0xA0, 0xA0, 0xA0, 'a','n','o','t','h','e','r',0xA0,'f','i','l','t','e','r',0xA0}
+	//};
+	int selectedFilter = 1000;
+	int pages = 2;
+	//showScreen(filters[1]);
+	screenPause();
 	int menuChoice = listenForMenu("A","B","*","D");
 	if(menuChoice == 1){
-		ScreenController(0); //They've selected this filter
+		//selectedFilter = filters[0][filterPage*2 - 2];
+		ScreenController(1);
 	}else if(menuChoice == 2){
-		ScreenController(2); //They've selected this filter	
+		selectedFilter = filters[0][filterPage*2 - 1];
 	}else if(menuChoice == 4){
+		//Change Page
 		if(filterPage < pages){
 			chooseFilter(filterPage+1);
 		}else {
@@ -115,7 +172,7 @@ void chooseFilter(int filterPage){
 void ScreenController(int screenUID){
 	//Take the screenUID requested, and run the correct function
 	setLastKey("X");
-	GPIO_ClearValue(1, 0x40000);
+GPIO_ClearValue(1, 0x40000);
 	switch(screenUID){
 		case 0:
 			mainScreen();
@@ -125,6 +182,9 @@ void ScreenController(int screenUID){
 			break;
 		case 2:
 			chooseFilter(1);
+			break;
+		case 3:
+			getUserInput();
 			break;
 
 	}
